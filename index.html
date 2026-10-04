@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FREE FIRE 4K // BATTLE ROYALE</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Three.js r128 Library from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+    <!-- 3D WebGL Canvas Container -->
+    <div id="game-container"></div>
+
+    <!-- Red Screen Flash on Damage -->
+    <div id="damage-vignette"></div>
+
+    <!-- HUD Overlay -->
+    <div id="hud-overlay">
+        <!-- Top Center Compass -->
+        <div class="compass-container">
+            <div class="compass-center-marker"></div>
+            <div class="compass-center-triangle"></div>
+            <div id="compass-tape">
+                <span class="compass-mark compass-cardinal">N</span>
+                <span class="compass-mark">15</span>
+                <span class="compass-mark">30</span>
+                <span class="compass-mark">45</span>
+                <span class="compass-mark compass-cardinal">NE</span>
+                <span class="compass-mark">60</span>
+                <span class="compass-mark">75</span>
+                <span class="compass-mark compass-cardinal">E</span>
+                <span class="compass-mark">105</span>
+                <span class="compass-mark">120</span>
+                <span class="compass-mark">135</span>
+                <span class="compass-mark compass-cardinal">SE</span>
+                <span class="compass-mark">150</span>
+                <span class="compass-mark">165</span>
+                <span class="compass-mark compass-cardinal">S</span>
+                <span class="compass-mark">195</span>
+                <span class="compass-mark">210</span>
+                <span class="compass-mark">225</span>
+                <span class="compass-mark compass-cardinal">SW</span>
+                <span class="compass-mark">240</span>
+                <span class="compass-mark">255</span>
+                <span class="compass-mark compass-cardinal">W</span>
+                <span class="compass-mark">285</span>
+                <span class="compass-mark">300</span>
+                <span class="compass-mark">315</span>
+                <span class="compass-mark compass-cardinal">NW</span>
+                <span class="compass-mark">330</span>
+                <span class="compass-mark">345</span>
+                <span class="compass-mark compass-cardinal">N</span>
+                <span class="compass-mark">15</span>
+                <span class="compass-mark">30</span>
+            </div>
+        </div>
+
+        <!-- Top Left Radar & Zone Timer -->
+        <div class="radar-container">
+            <canvas id="minimap-canvas" width="180" height="180"></canvas>
+            <div class="zone-badge">
+                <div id="zone-status">SAFE ZONE (1/4)</div>
+                <div id="zone-timer">0:45</div>
+            </div>
+        </div>
+
+        <!-- Top Right Match Status -->
+        <div class="status-panel-top-right">
+            <div class="status-card alive-card">
+                <div class="status-label">ALIVE</div>
+                <div class="status-value" id="alive-count">10</div>
+            </div>
+            <div class="status-card kills-card">
+                <div class="status-label">KILLS</div>
+                <div class="status-value" id="kill-count">0</div>
+            </div>
+        </div>
+
+        <!-- Kill Feed Notifications -->
+        <div id="kill-feed"></div>
+
+        <!-- Dynamic Reticle & Hitmarker -->
+        <div id="crosshair">
+            <div class="cross-dot"></div>
+            <div class="cross-tick tick-top"></div>
+            <div class="cross-tick tick-bottom"></div>
+            <div class="cross-tick tick-left"></div>
+            <div class="cross-tick tick-right"></div>
+        </div>
+
+        <div id="hitmarker">
+            <div class="hm-line hm-1"></div>
+            <div class="hm-line hm-2"></div>
+        </div>
+
+        <!-- Tactical Sniper Scope View -->
+        <div id="sniper-scope-overlay">
+            <div class="scope-reticle-h"></div>
+            <div class="scope-reticle-v"></div>
+            <div class="scope-center-circle"></div>
+            <div class="scope-mils">
+                <div class="mil-tick"></div>
+                <div class="mil-tick"></div>
+                <div class="mil-tick"></div>
+                <div class="mil-tick"></div>
+            </div>
+        </div>
+
+        <!-- Floating 3D Damage Numbers Layer -->
+        <div id="damage-numbers-container"></div>
+
+        <!-- Bottom Left Medkit Quick Slot -->
+        <div class="medkit-slot">
+            <div class="medkit-icon">🩹</div>
+            <div class="medkit-info">
+                <span class="medkit-key">[E] MEDKIT</span>
+                <span id="medkit-badge">x3</span>
+            </div>
+        </div>
+
+        <!-- Bottom Center Health & Armor Bars -->
+        <div class="bottom-center-hud">
+            <!-- Healing Progress -->
+            <div id="heal-indicator">
+                <div class="heal-label">APPLYING MEDKIT...</div>
+                <div class="heal-bar">
+                    <div id="heal-progress-fill"></div>
+                </div>
+            </div>
+
+            <!-- Armor Bar (EP) -->
+            <div class="bar-container">
+                <div class="bar-fill" id="armor-bar" style="width: 100%;"></div>
+                <div class="bar-label-overlay">
+                    <span>ARMOR / EP</span>
+                    <span id="armor-text">100 / 100</span>
+                </div>
+            </div>
+
+            <!-- Health Bar (HP) -->
+            <div class="bar-container" style="height: 18px;">
+                <div class="bar-fill" id="hp-bar" style="width: 100%;"></div>
+                <div class="bar-label-overlay">
+                    <span>HEALTH / HP</span>
+                    <span id="hp-text">200 / 200</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Right Weapon Ammo HUD -->
+        <div class="bottom-right-hud">
+            <div class="weapon-slots-row">
+                <div class="weapon-slot-pill active" id="slot-ak47">[1] AK-47</div>
+                <div class="weapon-slot-pill" id="slot-awm">[2] AWM</div>
+                <div class="weapon-slot-pill" id="slot-mp40">[3] MP40</div>
+            </div>
+
+            <div class="weapon-active-card">
+                <div id="weapon-name">AK-47</div>
+                <div class="ammo-display">
+                    <span id="ammo-mag">30</span>
+                    <span class="ammo-divider">/</span>
+                    <span id="ammo-reserve">150</span>
+                </div>
+                <div id="reload-notice">PRESS [R] TO RELOAD</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Start Menu Screen -->
+    <div id="start-menu" class="modal-overlay">
+        <div class="menu-card">
+            <h1 class="game-title">FREE FIRE: SURVIVAL</h1>
+            <div class="game-subtitle">4K ULTRA HD BATTLE ROYALE</div>
+
+            <div class="controls-grid">
+                <div class="ctrl-item"><span class="key-pill">W A S D</span> Move</div>
+                <div class="ctrl-item"><span class="key-pill">MOUSE</span> Look / Aim</div>
+                <div class="ctrl-item"><span class="key-pill">LEFT CLICK</span> Fire Weapon</div>
+                <div class="ctrl-item"><span class="key-pill">RIGHT CLICK</span> Scope / ADS Zoom</div>
+                <div class="ctrl-item"><span class="key-pill">SHIFT</span> Sprint</div>
+                <div class="ctrl-item"><span class="key-pill">SPACE</span> Jump</div>
+                <div class="ctrl-item"><span class="key-pill">C</span> Toggle Crouch</div>
+                <div class="ctrl-item"><span class="key-pill">1 2 3</span> Switch Weapons</div>
+                <div class="ctrl-item"><span class="key-pill">R</span> Reload</div>
+                <div class="ctrl-item"><span class="key-pill">E</span> Use Medkit</div>
+            </div>
+
+            <div class="settings-row">
+                <span>Graphics Rendering:</span>
+                <select id="graphics-select">
+                    <option value="4k" selected>4K Ultra HD (Supersampled)</option>
+                    <option value="2k">2K High (1440p)</option>
+                    <option value="1080p">1080p Performance</option>
+                </select>
+            </div>
+
+            <div class="settings-row">
+                <span>Mouse Sensitivity:</span>
+                <input type="range" id="sensitivity-slider" min="0.001" max="0.005" step="0.0005" value="0.0022">
+            </div>
+
+            <div class="settings-row">
+                <span>Audio Volume:</span>
+                <input type="range" id="volume-slider" min="0" max="1" step="0.05" value="0.8">
+            </div>
+
+            <button id="start-btn" class="btn-primary">START BATTLE ROYALE</button>
+        </div>
+    </div>
+
+    <!-- Victory Screen (BOOYAH!) -->
+    <div id="booyah-modal" class="modal-overlay">
+        <div class="menu-card" style="border-color: #ffea00;">
+            <div class="booyah-banner">BOOYAH!</div>
+            <div style="font-size: 16px; letter-spacing: 3px; color: #ff9100; font-weight: 700;">#1 VICTORY ROYALE</div>
+
+            <div class="stats-grid" id="booyah-stats">
+                <!-- Injected via JavaScript -->
+            </div>
+
+            <button id="play-again-btn" class="btn-primary">PLAY AGAIN</button>
+        </div>
+    </div>
+
+    <!-- Defeat Screen -->
+    <div id="defeat-modal" class="modal-overlay">
+        <div class="menu-card" style="border-color: #ff1744;">
+            <div class="defeat-title">ELIMINATED</div>
+            <div style="font-size: 14px; letter-spacing: 2px; color: #90a4ae; margin-bottom: 20px;">BETTER LUCK NEXT TIME!</div>
+
+            <div id="defeat-stats" style="margin-bottom: 25px; font-size: 18px;">
+                <!-- Injected via JavaScript -->
+            </div>
+
+            <button id="retry-btn" class="btn-primary" style="background: linear-gradient(135deg, #ff5252, #b71c1c); color: #fff;">RETRY MATCH</button>
+        </div>
+    </div>
+
+    <!-- Scripts in dependency order -->
+    <script src="src/audio.js"></script>
+    <script src="src/weapons.js"></script>
+    <script src="src/world.js"></script>
+    <script src="src/player.js"></script>
+    <script src="src/bot.js"></script>
+    <script src="src/ui.js"></script>
+    <script src="src/game.js"></script>
+</body>
+</html>

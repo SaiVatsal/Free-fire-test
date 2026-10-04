@@ -1,0 +1,823 @@
+/* Free Fire 4K - Stylesheet */
+
+@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,400;0,600;0,700;1,700&family=Rajdhani:wght@500;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+body, html {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: #0c0e12;
+    font-family: 'Rajdhani', 'Chakra Petch', sans-serif;
+    color: #ffffff;
+}
+
+#game-container {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* ================= HUD OVERLAY ================= */
+#hud-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    pointer-events: none;
+}
+
+/* --- TOP BAR & COMPASS --- */
+.compass-container {
+    position: absolute;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 380px;
+    height: 42px;
+    background: rgba(12, 16, 22, 0.75);
+    border: 1px solid rgba(0, 229, 255, 0.3);
+    backdrop-filter: blur(8px);
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.compass-center-marker {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 100%;
+    background: #ffea00;
+    box-shadow: 0 0 8px #ffea00;
+    z-index: 2;
+}
+
+.compass-center-triangle {
+    position: absolute;
+    top: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 6px solid #ffea00;
+    z-index: 3;
+}
+
+#compass-tape {
+    display: flex;
+    white-space: nowrap;
+    position: absolute;
+    transition: transform 0.05s linear;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: #b0bec5;
+}
+
+.compass-mark {
+    display: inline-block;
+    width: 60px;
+    text-align: center;
+}
+
+.compass-cardinal {
+    color: #00e5ff;
+    font-weight: 800;
+    font-size: 15px;
+}
+
+/* --- TOP RIGHT STATUS (ALIVE & KILLS) --- */
+.status-panel-top-right {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    display: flex;
+    gap: 15px;
+}
+
+.status-card {
+    background: rgba(16, 22, 30, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    padding: 8px 18px;
+    border-radius: 6px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.status-card.alive-card {
+    border-top: 3px solid #ffea00;
+}
+
+.status-card.kills-card {
+    border-top: 3px solid #ff1744;
+}
+
+.status-label {
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: #90a4ae;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.status-value {
+    font-size: 26px;
+    font-family: 'Chakra Petch', sans-serif;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.alive-card .status-value {
+    color: #ffea00;
+    text-shadow: 0 0 10px rgba(255, 234, 0, 0.5);
+}
+
+.kills-card .status-value {
+    color: #ff1744;
+    text-shadow: 0 0 10px rgba(255, 23, 68, 0.5);
+}
+
+/* --- TOP LEFT RADAR & ZONE INFO --- */
+.radar-container {
+    position: absolute;
+    top: 20px;
+    left: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#minimap-canvas {
+    width: 170px;
+    height: 170px;
+    border-radius: 50%;
+    box-shadow: 0 0 20px rgba(0, 229, 255, 0.25), inset 0 0 15px rgba(0, 0, 0, 0.8);
+    background: #0f1619;
+}
+
+.zone-badge {
+    margin-top: 10px;
+    background: rgba(10, 14, 20, 0.85);
+    border: 1px solid rgba(0, 229, 255, 0.4);
+    backdrop-filter: blur(6px);
+    border-radius: 4px;
+    padding: 4px 12px;
+    text-align: center;
+    min-width: 150px;
+}
+
+#zone-status {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #00e5ff;
+}
+
+#zone-timer {
+    font-size: 18px;
+    font-family: 'Chakra Petch', sans-serif;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+/* --- KILL FEED --- */
+#kill-feed {
+    position: absolute;
+    top: 245px;
+    left: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-width: 320px;
+}
+
+.kill-feed-entry {
+    background: rgba(14, 18, 24, 0.8);
+    border-left: 3px solid #ff9100;
+    padding: 5px 12px;
+    border-radius: 3px;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    animation: slideIn 0.3s ease-out;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+
+.feed-player {
+    color: #ffea00;
+    font-weight: 700;
+}
+
+.feed-bot {
+    color: #00e5ff;
+}
+
+.feed-weapon {
+    color: #cfd8dc;
+    font-size: 11px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 1px 6px;
+    border-radius: 2px;
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+/* --- DYNAMIC CROSSHAIR & HITMARKER --- */
+#crosshair {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 32px;
+    height: 32px;
+    pointer-events: none;
+}
+
+.cross-dot {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 4px;
+    height: 4px;
+    background: #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 0 4px #000;
+}
+
+.cross-tick {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 0 2px #000;
+}
+
+.tick-top { top: 2px; left: 14px; width: 4px; height: 7px; }
+.tick-bottom { bottom: 2px; left: 14px; width: 4px; height: 7px; }
+.tick-left { top: 14px; left: 2px; width: 7px; height: 4px; }
+.tick-right { top: 14px; right: 2px; width: 7px; height: 4px; }
+
+/* Hitmarker (X tick) */
+#hitmarker {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 24px;
+    height: 24px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.08s ease, transform 0.08s ease;
+}
+
+.hm-line {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 14px;
+    height: 2px;
+    background: #ff1744;
+    box-shadow: 0 0 6px #ff1744;
+}
+
+.hm-1 { transform: translate(-50%, -50%) rotate(45deg); }
+.hm-2 { transform: translate(-50%, -50%) rotate(-45deg); }
+
+/* --- SNIPER ADS OVERLAY --- */
+#sniper-scope-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    pointer-events: none;
+    background: radial-gradient(circle at center, transparent 38%, rgba(0, 0, 0, 0.95) 45%, #000000 100%);
+}
+
+.scope-reticle-h {
+    position: absolute;
+    top: 50%;
+    left: 10%;
+    right: 10%;
+    height: 1px;
+    background: rgba(0, 240, 255, 0.7);
+    box-shadow: 0 0 5px #00f0ff;
+}
+
+.scope-reticle-v {
+    position: absolute;
+    left: 50%;
+    top: 10%;
+    bottom: 10%;
+    width: 1px;
+    background: rgba(0, 240, 255, 0.7);
+    box-shadow: 0 0 5px #00f0ff;
+}
+
+.scope-center-circle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90px;
+    height: 90px;
+    border: 1px solid rgba(0, 240, 255, 0.8);
+    border-radius: 50%;
+}
+
+.scope-mils {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+}
+
+.mil-tick {
+    width: 8px;
+    height: 1px;
+    background: #00f0ff;
+}
+
+/* --- DAMAGE NUMBERS --- */
+#damage-numbers-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.damage-number {
+    position: absolute;
+    font-family: 'Chakra Petch', sans-serif;
+    font-weight: 800;
+    transform: translate(-50%, -50%);
+    animation: floatDamage 0.9s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
+}
+
+.damage-number.body {
+    color: #ffea00;
+    font-size: 26px;
+}
+
+.damage-number.headshot {
+    color: #ff1744;
+    font-size: 34px;
+    text-shadow: 0 0 12px rgba(255, 23, 68, 0.8);
+}
+
+@keyframes floatDamage {
+    0% { opacity: 0; transform: translate(-50%, 0) scale(0.6); }
+    20% { opacity: 1; transform: translate(-50%, -15px) scale(1.2); }
+    70% { opacity: 1; transform: translate(-50%, -45px) scale(1.0); }
+    100% { opacity: 0; transform: translate(-50%, -70px) scale(0.8); }
+}
+
+/* --- DAMAGE VIGNETTE --- */
+#damage-vignette {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    box-shadow: inset 0 0 100px 30px rgba(255, 23, 68, 0.8);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease-out;
+}
+
+/* --- BOTTOM STATUS & HEALTH --- */
+.bottom-center-hud {
+    position: absolute;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    width: 360px;
+}
+
+.bar-container {
+    width: 100%;
+    height: 16px;
+    background: rgba(14, 18, 24, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
+}
+
+.bar-fill {
+    height: 100%;
+    width: 100%;
+    transition: width 0.2s ease;
+}
+
+#hp-bar {
+    background: linear-gradient(90deg, #ff9100, #00e676);
+}
+
+#armor-bar {
+    background: linear-gradient(90deg, #00b0ff, #00e5ff);
+}
+
+.bar-label-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 10px;
+    align-items: center;
+    font-size: 10px;
+    font-weight: 700;
+    color: #ffffff;
+    text-shadow: 0 1px 3px #000;
+}
+
+/* Healing progress popup */
+#heal-indicator {
+    display: none;
+    background: rgba(10, 14, 20, 0.9);
+    border: 1px solid #00e676;
+    padding: 6px 16px;
+    border-radius: 4px;
+    text-align: center;
+    box-shadow: 0 0 12px rgba(0, 230, 118, 0.4);
+}
+
+.heal-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #00e676;
+    margin-bottom: 4px;
+}
+
+.heal-bar {
+    width: 140px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+#heal-progress-fill {
+    width: 0%;
+    height: 100%;
+    background: #00e676;
+}
+
+/* Quick Medkit slot */
+.medkit-slot {
+    position: absolute;
+    bottom: 25px;
+    left: 25px;
+    background: rgba(16, 22, 30, 0.85);
+    border: 1px solid rgba(0, 230, 118, 0.4);
+    padding: 8px 14px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.medkit-icon {
+    font-size: 22px;
+}
+
+.medkit-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.medkit-key {
+    font-size: 11px;
+    color: #90a4ae;
+    font-weight: 700;
+}
+
+#medkit-badge {
+    font-size: 16px;
+    font-weight: 800;
+    color: #00e676;
+}
+
+/* --- BOTTOM RIGHT WEAPONS HUD --- */
+.bottom-right-hud {
+    position: absolute;
+    bottom: 25px;
+    right: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+}
+
+.weapon-slots-row {
+    display: flex;
+    gap: 8px;
+}
+
+.weapon-slot-pill {
+    background: rgba(16, 22, 30, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #78909c;
+    transition: all 0.2s ease;
+}
+
+.weapon-slot-pill.active {
+    border-color: #ffea00;
+    color: #ffea00;
+    background: rgba(255, 234, 0, 0.15);
+    box-shadow: 0 0 10px rgba(255, 234, 0, 0.3);
+}
+
+.weapon-active-card {
+    background: rgba(14, 20, 28, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-right: 4px solid #ff9100;
+    backdrop-filter: blur(10px);
+    padding: 10px 22px;
+    border-radius: 6px;
+    text-align: right;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    min-width: 180px;
+}
+
+#weapon-name {
+    font-size: 18px;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: 1px;
+}
+
+.ammo-display {
+    font-family: 'Chakra Petch', sans-serif;
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-end;
+    gap: 4px;
+    margin-top: 4px;
+}
+
+#ammo-mag {
+    font-size: 34px;
+    font-weight: 800;
+    color: #ffea00;
+    text-shadow: 0 0 10px rgba(255, 234, 0, 0.4);
+}
+
+.ammo-divider {
+    font-size: 20px;
+    color: #78909c;
+}
+
+#ammo-reserve {
+    font-size: 18px;
+    color: #cfd8dc;
+    font-weight: 600;
+}
+
+#reload-notice {
+    display: none;
+    font-size: 12px;
+    font-weight: 800;
+    color: #ff1744;
+    letter-spacing: 1px;
+    animation: blink 0.6s infinite alternate;
+}
+
+@keyframes blink {
+    from { opacity: 0.3; }
+    to { opacity: 1; }
+}
+
+/* ================= MODALS & MENUS ================= */
+.modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(8, 10, 14, 0.92);
+    backdrop-filter: blur(16px);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto;
+}
+
+.menu-card {
+    background: rgba(18, 24, 34, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 40px rgba(0, 229, 255, 0.15);
+    border-radius: 12px;
+    padding: 40px;
+    max-width: 620px;
+    width: 90%;
+    text-align: center;
+}
+
+.game-title {
+    font-family: 'Chakra Petch', sans-serif;
+    font-size: 46px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    background: linear-gradient(135deg, #ffea00, #ff5722, #ff1744);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 30px rgba(255, 87, 34, 0.5);
+    margin-bottom: 6px;
+}
+
+.game-subtitle {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: #00e5ff;
+    margin-bottom: 28px;
+    text-transform: uppercase;
+}
+
+.controls-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 28px;
+    text-align: left;
+    background: rgba(12, 16, 22, 0.7);
+    padding: 18px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.ctrl-item {
+    font-size: 13px;
+    color: #cfd8dc;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.key-pill {
+    background: #263238;
+    color: #ffea00;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: 3px;
+    font-size: 11px;
+    border: 1px solid rgba(255, 234, 0, 0.3);
+}
+
+.settings-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    font-size: 14px;
+    color: #b0bec5;
+}
+
+select, input[type="range"] {
+    background: #263238;
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    padding: 6px 12px;
+    font-family: inherit;
+    font-size: 13px;
+    outline: none;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #ffea00, #ff9100);
+    color: #000000;
+    font-family: 'Chakra Petch', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    padding: 14px 40px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(255, 145, 0, 0.4);
+    transition: all 0.2s ease;
+    margin-top: 15px;
+    width: 100%;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(255, 145, 0, 0.6);
+}
+
+/* --- BOOYAH! VICTORY BANNER --- */
+#booyah-modal {
+    display: none;
+}
+
+.booyah-banner {
+    font-family: 'Chakra Petch', sans-serif;
+    font-size: 72px;
+    font-weight: 900;
+    font-style: italic;
+    background: linear-gradient(180deg, #fff700 0%, #ff8c00 50%, #d84315 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 35px rgba(255, 140, 0, 0.9));
+    animation: booyahPulse 1.2s infinite alternate;
+    margin-bottom: 15px;
+}
+
+@keyframes booyahPulse {
+    from { transform: scale(1.0); }
+    to { transform: scale(1.06); }
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin: 24px 0;
+}
+
+.stat-box {
+    background: rgba(12, 16, 24, 0.8);
+    border: 1px solid rgba(255, 234, 0, 0.3);
+    padding: 12px;
+    border-radius: 6px;
+}
+
+.stat-box span {
+    font-size: 11px;
+    color: #90a4ae;
+    font-weight: 700;
+    display: block;
+}
+
+.stat-box strong {
+    font-size: 24px;
+    color: #ffea00;
+    font-family: 'Chakra Petch', sans-serif;
+}
+
+/* --- DEFEAT MODAL --- */
+#defeat-modal {
+    display: none;
+}
+
+.defeat-title {
+    font-family: 'Chakra Petch', sans-serif;
+    font-size: 46px;
+    font-weight: 800;
+    color: #ff1744;
+    text-shadow: 0 0 25px rgba(255, 23, 68, 0.7);
+    margin-bottom: 10px;
+}
